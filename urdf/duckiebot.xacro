@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<robot name="duckiebot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="wheel_radius" value="0.033"/>
+  <xacro:property name="wheel_width"  value="0.01"/>
+  <xacro:property name="wheel_sep"    value="0.102"/>
+  <xacro:property name="chassis_x"    value="0.13"/>
+  <xacro:property name="chassis_y"    value="0.086"/>
+  <xacro:property name="chassis_z"    value="0.123"/>
+  <xacro:property name="J_mult" value="$(arg J_mult)"/>
+  <xacro:arg name="J_mult" default="1.0"/>
+
+  <link name="base_link"/>
+
+  <joint name="base_to_chassis" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="chassis">
+    <visual>
+      <origin xyz="0 0 ${chassis_z/2}" rpy="0 0 0"/>
+      <geometry><box size="${chassis_x} ${chassis_y} ${chassis_z}"/></geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${chassis_z/2}" rpy="0 0 0"/>
+      <geometry><box size="${chassis_x} ${chassis_y} ${chassis_z}"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${chassis_z/2}" rpy="0 0 0"/>
+      <mass value="0.935"/>
+      <inertia ixx="1.76e-3" ixy="0" ixz="0"
+              iyy="2.50e-3" iyz="0"
+              izz="4.1e-3"/>
+    </inertial>
+  </link>
+
+  <xacro:macro name="wheel" params="prefix y_pos">
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.03"/>
+        <inertia ixx="1.5e-4" ixy="0" ixz="0"
+          iyy="${2.5e-4 * J_mult}" iyz="0"
+          izz="1.5e-4"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="chassis"/>
+      <child link="${prefix}_wheel_link"/>
+      <origin xyz="0.02 ${y_pos} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.0457"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="left"  y_pos="${wheel_sep/2}"/>
+  <xacro:wheel prefix="right" y_pos="-${wheel_sep/2}"/>
+
+  <link name="caster_link">
+    <visual>
+      <geometry><sphere radius="0.008"/></geometry>
+    </visual>
+    <collision>
+      <geometry><sphere radius="0.008"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.005"/>
+      <inertia ixx="1.28e-7" ixy="0" ixz="0"
+               iyy="1.28e-7" iyz="0"
+               izz="1.28e-7"/>
+    </inertial>
+  </link>
+
+  <joint name="caster_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="caster_link"/>
+    <origin xyz="-0.05 0 ${0.008 - wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="effort">
+        <param name="min">-1.0</param>
+        <param name="max">1.0</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="effort">
+        <param name="min">-1.0</param>
+        <param name="max">1.0</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find duckiebot)/config/controller_config.yaml</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="caster_link">
+    <mu1>0.01</mu1>
+    <mu2>0.01</mu2>
+  </gazebo>
+
+  <gazebo reference="left_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <kp>1e7</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.0</maxVel>
+  </gazebo>
+
+  <gazebo reference="right_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <kp>1e7</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.0</maxVel>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
+      <ros>
+        <namespace>/</namespace>
+        <remapping>odom:=ground_truth/odom</remapping>
+      </ros>
+      <body_name>base_link</body_name>
+      <frame_name>world</frame_name>
+      <update_rate>100.0</update_rate>
+      <gaussian_noise>0.0</gaussian_noise>
+    </plugin>
+  </gazebo>
+</robot>

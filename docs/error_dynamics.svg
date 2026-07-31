@@ -1,0 +1,51 @@
+<svg width="680" height="330" viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+<title>Trajectory, offset robot, and error equations of motion</title>
+<desc>Curved reference path, closest point P with its dashed tangent, robot offset by e_l and tilted by a clearly visible angle e_theta between the tangent and its velocity v, with its own rotation omega. The two error equations of motion are shown below.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<rect width="680" height="330" fill="#ffffff"/>
+
+<!-- reference path -->
+<path d="M 60 250 Q 240 110 470 150" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+<text x="70" y="238" fill="#555" font-size="13">reference path</text>
+
+<!-- point P -->
+<circle cx="250" cy="150" r="3.5" fill="#555"/>
+<text x="250" y="185" fill="#555" font-size="12" text-anchor="middle">P (closest point)</text>
+
+<!-- e_l -->
+<line x1="250" y1="150" x2="238" y2="98" stroke="#D85A30" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="223" y="122" fill="#D85A30" font-size="14" text-anchor="end" font-weight="600">e_l</text>
+
+<!-- robot -->
+<circle cx="238" cy="98" r="6.5" fill="#1D9E75" stroke="#0d6b4d" stroke-width="1"/>
+<text x="238" y="80" fill="#1D9E75" font-size="12" text-anchor="middle" font-weight="600">robot</text>
+
+<!-- tangent direction at robot -->
+<line x1="238" y1="98" x2="368" y2="72" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="374" y="70" fill="#777" font-size="12">path direction</text>
+
+<!-- velocity v -->
+<line x1="238" y1="98" x2="345" y2="24" stroke="#1a1a1a" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="352" y="22" fill="#1a1a1a" font-size="14" font-weight="600">v</text>
+
+<!-- e_theta -->
+<path d="M 290 88 A 55 55 0 0 0 300 60" fill="none" stroke="#555" stroke-width="0.8"/>
+<text x="303" y="72" fill="#1a1a1a" font-size="14" font-weight="600">e_&#952;</text>
+
+<!-- omega -->
+<path d="M 208 111 A 16 16 0 0 0 200 125" fill="none" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+<text x="191" y="115" fill="#1a1a1a" font-size="14" text-anchor="end" font-weight="600">&#969;</text>
+
+<!-- separator -->
+<line x1="60" y1="250" x2="620" y2="250" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+<!-- equations -->
+<text x="60" y="282" fill="#1a1a1a" font-size="15" font-weight="600">&#279;_l = v&#183;sin(e_&#952;)</text>
+<text x="330" y="282" fill="#777" font-size="12">lateral drift speed away from the path</text>
+
+<text x="60" y="312" fill="#1a1a1a" font-size="15" font-weight="600">&#279;_&#952; = &#969; &#8722; &#954;&#183;v&#183;cos(e_&#952;) / (1 &#8722; &#954;&#183;e_l)</text>
+<text x="410" y="312" fill="#777" font-size="12">= robot rotation &#8722; path rotation</text>
+</svg>

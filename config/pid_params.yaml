@@ -1,0 +1,18 @@
+pid_controller_node:
+  ros__parameters:
+    # Gains — mode différentiel (cascade position -> cap)
+    kp_pos: 3.0
+    ki_pos: 0.0
+    kd_pos: 0.0
+    kp_cap: 3.0
+    ki_cap: 0.0
+    kd_cap: 0.0
+    # Gains — mode commun (PI sur vitesse moyenne)
+    kp_vit: 1.0
+    ki_vit: 0.0
+    # Saturations des boucles
+    theta_ref_max: 0.5   # rad — cap max demandé par la boucle position
+    v_rot_max: 1.5       # V   — correction différentielle max
+    v_avg_max: 1.0       # V   — correction de vitesse max
+    # Cadence : /joint_states (~985 Hz) décimé -> ~197 Hz
+    decimation: 5

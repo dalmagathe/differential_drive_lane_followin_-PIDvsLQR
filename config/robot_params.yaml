@@ -1,0 +1,8 @@
+pid_controller_node:
+  ros__parameters:
+    ke : 0.478
+    wheel_radius : 0.033
+    wheel_base : 0.102
+    vr : 0.2
+    v_max : 5.0
+    decimation : 5
